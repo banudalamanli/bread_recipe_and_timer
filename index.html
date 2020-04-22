@@ -5,19 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"
     integrity="sha256-2YQRJMXD7pIAPHiXr0s+vlRWA7GYJEK0ARns7k2sbHY=" crossorigin="anonymous" />
-  <title>Bread Recipe Timer</title>
-</head>
-<style>
-  h5.underline {
+  <title>Bread Recipe and Time Calculator</title>
+  <style>
+  .main {
+    background: powderblue;
+  }
+  .underline {
     text-decoration: underline
+  }
+  .padding {
+    padding: 40px
   }
   th.large-font {
      font-size: 24px
   }
+
+  .multiply, .divide {
+
+  }
+
+  input.multiply {
+    background-color: orange;
+  }
+
+  input.divide {
+    background: silver
+  }
 </style>
+</head>
 <body>
-  <div class="container">
-    <h2>Bread Full Recipe</h2>
+  <div class="main container twelve columns padding">
+    <h3 class="underline ten columns offset-by-two">Bread Recipe Details</h3>
     <h5 class="underline">Ingredients:</h5>
     <form id="recipe-form">
       <div>
@@ -59,10 +77,11 @@
       </div>
     </form>
     <hr>
-      <div class="container" id="divide-or-multiply">
-        <button></button>
-        <button></button>
+      <div class="container twelve columns" id="divide-or-multiply">
+        <input type="button" value="Double it" class="multiply six columns">
+        <input type="button" value="Halve it" class="divide six columns">
       </div>
+    <hr>
     <hr>
     <table class="u-full-width">
       <thead>
