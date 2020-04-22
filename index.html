@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"
+    integrity="sha256-2YQRJMXD7pIAPHiXr0s+vlRWA7GYJEK0ARns7k2sbHY=" crossorigin="anonymous" />
+  <title>Bread Recipe Timer</title>
+</head>
+<style>
+  h5.underline {
+    text-decoration: underline
+  }
+  th.large-font {
+     font-size: 24px
+  }
+</style>
+<body>
+  <div class="container">
+    <h2>Bread Full Recipe</h2>
+    <h5 class="underline">Ingredients:</h5>
+    <form id="recipe-form">
+      <div>
+        <label for="flour">Flour in Grams</label>
+        <input type="number" id="flour" class="u-half-width">
+      </div>
+      <div>
+        <label for="water">Water in Grams</label>
+        <input type="number" id="water" class="u-half-width">
+      </div>
+      <div>
+        <label for="yeast">Yeast in Grams</label>
+        <input type="number" id="yeast" class="u-half-width">
+      </div>
+      <div>
+        <label for="salt">Salt in Grams</label>
+        <input type="number" id="salt" class="u-half-width">
+      </div>
+      <h5 class="underline">Times in recipe:</h5>
+      <div>
+        <label for="number-of-folds">Number of Folds</label>
+        <input type="number" id="numberOfFolds" class="u-half-width">
+      </div>
+      <div>
+        <label for="bulk-fermentation">Bulk Fermentation Time in Hours</label>
+        <input type="number" id="bulk-fermentation" class="u-half-width">
+      </div>
+      <div>
+        <label for="proof-time">Proof Time in Hours</label>
+        <input type="number" id="proof-time" class="u-half-width">
+      </div>
+      <div>
+        <label for="number-of-loaves">Number of Loaves</label>
+        <input type="number" id="number-of-loaves" class="u-half-width">
+      </div>
+      <div>
+        <h5 class="underline">Start Time:</h5>
+        <input type="number" id="Start Time" class="u-half-width">
+      </div>
+    </form>
+    <hr>
+      <div class="container" id="divide-or-multiply">
+        <button></button>
+        <button></button>
+      </div>
+    <hr>
+    <table class="u-full-width">
+      <thead>
+        <tr class="u-full-width">
+          <th class="large-font">Step</th>
+          <th class="large-font">Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Autolyse Ends (Start mixing)</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Mixing Ends (Starts bulk fermentation</td>
+          <td id="mixing"></td>
+        </tr>
+        <tr class="folds">
+          <td>Fold #1</td>
+          <td id="fold-1"></td>
+        </tr>
+        <tr class="folds">
+          <td>Fold #2</td>
+          <td id="fold-2"></td>
+        </tr>
+        <tr>
+          <td>Bulk Fermentation Ends</td>
+          <td id="bulk-fermentation-end"></td>
+        </tr>
+        <tr>
+          <td>Divide/Shape Done</td>
+          <td id="divide-shape"></td>
+        </tr>
+        <tr>
+          <td>*** Turn on Oven Time***</td>
+          <td id="turn-on-oven"></td>
+        </tr>
+        <tr>
+          <td>Proofing Ends (Put in Oven)</td>
+          <td id="proofing-end"></td>
+        </tr>
+        <tr>
+          <td>Take lid off</td>
+          <td id="take-lid-off"></td>
+        </tr>
+        <tr>
+          <td>Take out</td>
+          <td id="take-out"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
