@@ -28,11 +28,14 @@
   input.start-timer {
     background: orange;
   }
+  input.clear {
+  background: seashell;
+  }
 </style>
 </head>
 <body>
-  <div class="main container twelve columns padding">
-    <h3 class="underline ten columns offset-by-two">Bread Recipe Details</h3>
+  <div class="main container padding">
+    <h3 class="underline ten columns offset-by-four">Bread Recipe Details</h3>
     <h5 class="underline">Ingredients:</h5>
     <form id="recipe-form">
       <div>
@@ -78,6 +81,9 @@
       </div> -->
       <div class="container twelve columns" id="start-timer">
         <input type="Submit" value="START TIMER" class="start-timer u-full-width">
+      </div>
+      <div class="container twelve columns" id="clear">
+        <input type="button" value="CLEAR RECIPE" class="clear u-full-width">
       </div>
     </form>
     <hr>
