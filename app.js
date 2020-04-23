@@ -16,7 +16,7 @@ function UI() {
   // Calculate Times for the steps
   UI.prototype.setTimeForSteps = function(recipe) {
     let time = recipe.startTime // It will be a string
-    let autolyseEndTime = calculateTimes(time, 20)
+    let autolyseEndTime = calculateEndTime(time, 20)
   }
 
   UI.prototype.showRecipe = function(recipe) {
@@ -63,8 +63,29 @@ class Store {
 }
 
 // Add hours and minutes to time
-function calculateTimes(startTime, addedTime) {
-  return "here"
+function calculateEndTime(startTime, addedTime) {
+  let endHour = Number(startTime[0] + startTime[1])
+  let endMinute = Number(startTime[3] + startTime[4])
+  let addedHours = 0
+  let addedMinutes = 0
+
+  // Check if entered time has decimals i.e. 1,5 hours idicating 1 hour 30 minutes
+  if (addedTime % 1 === 0) {
+    addedHours = addedTime
+  } else {
+    addedHours = Math.floor(addedTime)
+    addedMinutes = (addedTime % 1) * 60
+  }
+
+  endHour += addedHours
+  endMinute += addedMinutes
+  console.log(endMinute)
+  endMinute == 0 ? (endMinute = "00") : endMinute
+  
+  console.log(endHour)
+
+  return endHour + ":" + endMinute
+
 }
 
 // DOM Load Event Listener
