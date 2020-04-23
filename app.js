@@ -55,21 +55,19 @@ function UI() {
 
 // Local Storage Class
 class Store {
-  static getRecipes() {
-    let storedRecipes = []
+  static getRecipe() {
+    let storedRecipe = []
     if (localStorage.getItem('recipes') === null) {
-      storedRecipes = []
+      storedRecipe = []
     } else {
-      storedRecipes = JSON.parse(localStorage.getItem('recipes'))
+      storedRecipe = JSON.parse(localStorage.getItem('recipes'))
     }
-    return storedRecipes
+    return storedRecipe
   }
 
   static displayRecipe() {
-    let recipes = Store.getRecipes()
-    console.log(recipes.length !== 0)
+    let recipes = Store.getRecipe()
     if (recipes.length !== 0) {
-      console.log("here")
       let recipe = recipes[0]
       // Instanciate UI
       const ui = new UI()
@@ -130,6 +128,7 @@ document.addEventListener('DOMContentLoaded', Store.displayRecipe)
 
 // Event Listeners
 document.getElementById('recipe-form').addEventListener('submit', function(e) {
+  e.preventDefault()
   // Get for values
   const flour = document.getElementById('flour').value
   const water = document.getElementById('water').value
@@ -155,6 +154,36 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
 })
 
 document.getElementById('clear-recipe').addEventListener('click', function (e) {
-  e.preventDefault()
   Store.removeRecipe()
+  window.location.reload()
+})
+
+document.getElementById('divide').addEventListener('click', function(e) {
+  e.preventDefault()
+  let initalRecipe = Store.getRecipe()[0]
+  let newRecipe = initalRecipe
+  newRecipe.flour = (Number(initalRecipe.flour) / 2).toString()
+  newRecipe.water = (Number(initalRecipe.water) / 2).toString()
+  newRecipe.yeast = (Number(initalRecipe.yeast) / 2).toString()
+  newRecipe.salt = (Number(initalRecipe.salt) / 2).toString()
+  Store.addRecipe(newRecipe)
+
+  let ui = new UI()
+
+  ui.showRecipe(newRecipe)
+})
+
+document.getElementById('multiply').addEventListener('click', function (e) {
+  e.preventDefault()
+  let initalRecipe = Store.getRecipe()[0]
+  let newRecipe = initalRecipe
+  newRecipe.flour = (Number(initalRecipe.flour) * 2).toString()
+  newRecipe.water = (Number(initalRecipe.water) * 2).toString()
+  newRecipe.yeast = (Number(initalRecipe.yeast) * 2).toString()
+  newRecipe.salt = (Number(initalRecipe.salt) * 2).toString()
+  Store.addRecipe(newRecipe)
+
+  let ui = new UI()
+
+  ui.showRecipe(newRecipe)
 })
