@@ -16,7 +16,28 @@ function UI() {
   // Calculate Times for the steps
   UI.prototype.setTimeForSteps = function(recipe) {
     let time = recipe.startTime // It will be a string
-    let autolyseEndTime = calculateEndTime(time, 20)
+    let autolyseEndTime = calculateEndTime(time, (20/60))
+    let mixingEndTime = calculateEndTime(autolyseEndTime, (10/60))
+    let firstFold = calculateEndTime(mixingEndTime, (15/60))
+    let secondFold = calculateEndTime(firstFold, (30/60))
+    let bulkFermentationEnds = calculateEndTime(mixingEndTime, recipe.bulkFermentation)
+    // console.log(bulkFermentationEnds)
+    let divideAndShapeDone = calculateEndTime(bulkFermentationEnds, (10/60))
+    let proofingEnds = calculateEndTime(divideAndShapeDone, recipe.proof)
+    let turnOnOven = calculateEndTime(proofingEnds, -1) //1 hour before proofing ends
+    let takeLidOff = calculateEndTime(proofingEnds, (40/60)) // 40 minutes later
+    let takeOut = calculateEndTime(takeLidOff, (10/60))
+
+    document.getElementById('autolyse-end').innerHTML = autolyseEndTime
+    document.getElementById('mixing-end').innerHTML = mixingEndTime
+    document.getElementById('fold-1').innerHTML = firstFold
+    document.getElementById('fold-2').innerHTML = secondFold
+    document.getElementById('bulk-fermentation-end').innerHTML = bulkFermentationEnds
+    document.getElementById('divide-shape').innerHTML = divideAndShapeDone
+    document.getElementById('turn-on-oven').innerHTML = turnOnOven
+    document.getElementById('proofing-end').innerHTML = proofingEnds
+    document.getElementById('take-lid-off').innerHTML = takeLidOff
+    document.getElementById('take-out').innerHTML = takeOut
   }
 
   UI.prototype.showRecipe = function(recipe) {
@@ -64,6 +85,7 @@ class Store {
 
 // Add hours and minutes to time
 function calculateEndTime(startTime, addedTime) {
+  addedTime = +addedTime
   let endHour = Number(startTime[0] + startTime[1])
   let endMinute = Number(startTime[3] + startTime[4])
   let addedHours = 0
@@ -79,13 +101,24 @@ function calculateEndTime(startTime, addedTime) {
 
   endHour += addedHours
   endMinute += addedMinutes
-  console.log(endMinute)
-  endMinute == 0 ? (endMinute = "00") : endMinute
+
+  if (endMinute >= 60) {
+    endHour += 1
+    endMinute = endMinute % 60
+  }
   
-  console.log(endHour)
+  if (endHour > 24) {
+    let nextDayEndHour = endHour % 24
+    return makeTimeDoubleDigitsString(nextDayEndHour) + ":" + makeTimeDoubleDigitsString(endMinute) + " *** This is the next day!!!"
+  } else {
+    return makeTimeDoubleDigitsString(endHour) + ":" + makeTimeDoubleDigitsString(endMinute)
+  }
 
-  return endHour + ":" + endMinute
+}
 
+// Add leading 0 to single digit time and stringify
+function makeTimeDoubleDigitsString(time) {
+  return time < 10 ? ("0" + time) : (time.toString())
 }
 
 // DOM Load Event Listener
