@@ -67,10 +67,14 @@ class Store {
 
   static displayRecipe() {
     let recipes = Store.getRecipes()
-    let recipe = recipes[0]
-    // Instanciate UI
-    const ui = new UI()
-    ui.showRecipe(recipe)
+    console.log(recipes.length !== 0)
+    if (recipes.length !== 0) {
+      console.log("here")
+      let recipe = recipes[0]
+      // Instanciate UI
+      const ui = new UI()
+      ui.showRecipe(recipe)
+    }
   }
 
   static addRecipe(recipe) {
@@ -79,7 +83,7 @@ class Store {
   }
 
   static removeRecipe() {
-
+    localStorage.clear()
   }
 }
 
@@ -126,7 +130,6 @@ document.addEventListener('DOMContentLoaded', Store.displayRecipe)
 
 // Event Listeners
 document.getElementById('recipe-form').addEventListener('submit', function(e) {
-  e.preventDefault()
   // Get for values
   const flour = document.getElementById('flour').value
   const water = document.getElementById('water').value
@@ -149,4 +152,9 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
   // Calculate the times for steps
   ui.setTimeForSteps(recipe)
 
+})
+
+document.getElementById('clear-recipe').addEventListener('click', function (e) {
+  e.preventDefault()
+  Store.removeRecipe()
 })
