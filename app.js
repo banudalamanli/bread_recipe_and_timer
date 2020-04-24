@@ -86,14 +86,14 @@ class Store {
   }
 }
 
-// To change strings to camel case
+// To change strings to camel case - String
 function camelize(string) {
   return string.replace(/(\-[a-z])/g, $1 => $1.toUpperCase().replace('-', ''));
 }
 // ES6 version
 // const camelize = string => string.replace(/(\-[a-z])/g, $1 => $1.toUpperCase().replace('-', ''))
 
-// To change to dash case
+// To change to dash case - String
 function dashify(string) {
   return string.replace(/([A-Z])/g, $1 => "-" + $1.toLowerCase());
 }
@@ -130,7 +130,12 @@ function addFoldingRowsWithTime(recipe, endTimeOfPrevFold) {
   } while (numOfExtraFoldingRows > 0)
 }
 
-// Add hours and minutes to time
+// Remove extra fold rows
+function removeExtraFoldingRows() {
+  
+}
+
+// Add hours and minutes to time - String
 function calculateEndTime(startTime, addedTime) {
   addedTime = +addedTime
   let endHour = Number(startTime[0] + startTime[1])
@@ -163,9 +168,19 @@ function calculateEndTime(startTime, addedTime) {
 
 }
 
-// Add leading 0 to single digit time and stringify
+// Add leading 0 to single digit time and stringify - String
 function makeTimeDoubleDigitsString(time) {
   return time < 10 ? ("0" + time) : (time.toString())
+}
+
+// Check if Start Timer button was clicked accidentally - Boolean
+function accidentalClick(recipe) {
+  if (Store.getRecipe().length !== 0) {
+    let prevRecipe = Store.getRecipe()[0]
+    return ((JSON.stringify(prevRecipe) === JSON.stringify(recipe)) && (document.getElementById('autolyse-end').innerHTML != ""))
+  }
+
+  return false
 }
 
 // DOM Load Event Listener
@@ -187,18 +202,25 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
 
   // Instanciate Recipe
   const recipe = new Recipe(flour, water, yeast, salt, numberOfFolds, bulkFermentation, proof, numberOfLoaves, startTime)
+
+  // Check if there are empty fields
   const areThereEmptyFields = Object.values(recipe).some(function(field) {
     return field == ""
   })
   
+  // Alert if there are empty fields
   if (areThereEmptyFields) {
     alert("Please fill in fields before starting the timer :)")
+  } else if (accidentalClick(recipe)) {
+    return
   } else {
+    // Remove added extraFoldingRows
+    removeExtraFoldingRows()
     // Add to Local Storage
     Store.addRecipe(recipe)
     // Instanciate UI
     const ui = new UI()
-    // Calculate the times for steps
+    // Calculate and display times for steps
     ui.setTimeForSteps(recipe)
   }
 
