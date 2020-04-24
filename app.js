@@ -1,6 +1,7 @@
 // Recipe Constructor
-function Recipe(flour, water, yeast, salt, numberOfFolds, bulkFermentation, proof, numberOfLoaves, startTime) {
-  this.flour = flour
+function Recipe(whiteFlour, wholeWheatFlour, water, yeast, salt, numberOfFolds, bulkFermentation, proof, numberOfLoaves, startTime) {
+  this.whiteFlour = whiteFlour
+  this.wholeWheatFlour = wholeWheatFlour
   this.water = water
   this.yeast = yeast
   this.salt = salt
@@ -215,7 +216,8 @@ document.addEventListener('DOMContentLoaded', Store.displayRecipe)
 document.getElementById('recipe-form').addEventListener('submit', function(e) {
   e.preventDefault()
   // Get for values
-  const flour = document.getElementById('flour').value
+  const whiteFlour = document.getElementById('white-flour').value
+  const wholeWheatFlour = document.getElementById('whole-wheat-flour').value
   const water = document.getElementById('water').value
   const yeast = document.getElementById('yeast').value
   const salt = document.getElementById('salt').value
@@ -226,7 +228,7 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
   const startTime = document.getElementById('start-time').value
 
   // Instanciate Recipe
-  const recipe = new Recipe(flour, water, yeast, salt, numberOfFolds, bulkFermentation, proof, numberOfLoaves, startTime)
+  const recipe = new Recipe(whiteFlour, wholeWheatFlour, water, yeast, salt, numberOfFolds, bulkFermentation, proof, numberOfLoaves, startTime)
 
   // Check if there are empty fields
   const areThereEmptyFields = Object.values(recipe).some(function(field) {
@@ -263,7 +265,8 @@ document.getElementById('divide').addEventListener('click', function(e) {
   } else {
     let initalRecipe = Store.getRecipe()[0]
     let newRecipe = initalRecipe
-    newRecipe.flour = (Number(initalRecipe.flour) / 2).toString()
+    newRecipe.whiteFlour = (Number(initalRecipe.whiteFlour) / 2).toString()
+    newRecipe.wholeWheatFlour = (Number(initalRecipe.wholeWheatFlour) / 2).toString()
     newRecipe.water = (Number(initalRecipe.water) / 2).toString()
     newRecipe.yeast = (Number(initalRecipe.yeast) / 2).toString()
     newRecipe.salt = (Number(initalRecipe.salt) / 2).toString()
@@ -280,7 +283,8 @@ document.getElementById('multiply').addEventListener('click', function (e) {
   } else {
     let initalRecipe = Store.getRecipe()[0]
     let newRecipe = initalRecipe
-    newRecipe.flour = (Number(initalRecipe.flour) * 2).toString()
+    newRecipe.whiteFlour = (Number(initalRecipe.whiteFlour) * 2).toString()
+    newRecipe.wholeWheatFlour = (Number(initalRecipe.wholeWheatFlour) * 2).toString()
     newRecipe.water = (Number(initalRecipe.water) * 2).toString()
     newRecipe.yeast = (Number(initalRecipe.yeast) * 2).toString()
     newRecipe.salt = (Number(initalRecipe.salt) * 2).toString()
