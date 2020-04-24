@@ -42,22 +42,15 @@ function UI() {
 
     // Check number of folds and add field for extra folds
     if (recipe.numberOfFolds > 2) {
-      // console.log(firstFold)
-      // console.log(secondFold)
       addFoldingRowsWithTime(recipe, secondFold)
     }
   }
 
   UI.prototype.showRecipe = function(recipe) {
-    document.getElementById('flour').value = recipe.flour
-    document.getElementById('water').value = recipe.water
-    document.getElementById('yeast').value = recipe.yeast
-    document.getElementById('salt').value = recipe.salt
-    document.getElementById('number-of-folds').value = recipe.numberOfFolds
-    document.getElementById('bulk-fermentation').value = recipe.bulkFermentation
-    document.getElementById('proof').value = recipe.proof
-    document.getElementById('number-of-loaves').value = recipe.numberOfLoaves
-    document.getElementById('start-time').value = recipe.startTime
+    Object.keys(recipe).forEach(key => {
+      let id = dashify(key)
+      document.getElementById(id).value = recipe[key]
+    })
   }
 }
 
@@ -93,6 +86,19 @@ class Store {
   }
 }
 
+// To change strings to camel case - String
+function camelize(string) {
+  return string.replace(/(\-[a-z])/g, $1 => $1.toUpperCase().replace('-', ''));
+}
+// ES6 version
+// const camelize = string => string.replace(/(\-[a-z])/g, $1 => $1.toUpperCase().replace('-', ''))
+
+// To change to dash case - String
+function dashify(string) {
+  return string.replace(/([A-Z])/g, $1 => "-" + $1.toLowerCase());
+}
+
+
 // Set time for step
 function setTime(id, time) {
   document.getElementById(id).innerHTML = time
@@ -112,7 +118,7 @@ function addFoldingRowsWithTime(recipe, endTimeOfPrevFold) {
     row.innerHTML = `
       <td>Fold #${nextFoldNumber}</td>
       <td id="fold-${nextFoldNumber}"></td>`
-    // Insert it before bulk fermentation ends
+    // Insert row before "bulk fermentation ends" node
     timeTable.insertBefore(row, refNode.parentNode)
     // Calculate the time
     lastFoldTime = calculateEndTime(lastFoldTime, 20/60)
@@ -124,7 +130,33 @@ function addFoldingRowsWithTime(recipe, endTimeOfPrevFold) {
   } while (numOfExtraFoldingRows > 0)
 }
 
-// Add hours and minutes to time
+// Remove extra fold rows
+function removeExtraFoldingRows(newRecipe) {
+  // Calculate how many extra rows there are
+  const defaultNumOfRows = 10
+  const totalNumOfRows = document.getElementById("time-table-body").rows.length
+  let numOfRowsToDelete = totalNumOfRows - 10
+  let foldNum = 3
+
+  if (Store.getRecipe() == []) { // First time on page; no saved recipe in LS, inital DOM
+    return
+  } else { // LS has recipe from previous visit and there are extra rows
+    let prevRecipe = Store.getRecipe()[0]
+    // Check if recipes have different fold numbers
+    console.log(((prevRecipe.numberOfFolds !== newRecipe.numberOfFolds) && (prevRecipe.numberOfFolds > 2)))
+    if ((prevRecipe.numberOfFolds !== newRecipe.numberOfFolds) && (prevRecipe.numberOfFolds > 2)) {
+      do {
+        let row = document.getElementById(`fold-${foldNum}`).parentNode
+        row.parentNode.removeChild(row)
+        numOfRowsToDelete -= 1
+        foldNum++
+      } while (numOfRowsToDelete > 0)
+    }
+  }
+  
+}
+
+// Add hours and minutes to time - String
 function calculateEndTime(startTime, addedTime) {
   addedTime = +addedTime
   let endHour = Number(startTime[0] + startTime[1])
@@ -157,9 +189,19 @@ function calculateEndTime(startTime, addedTime) {
 
 }
 
-// Add leading 0 to single digit time and stringify
+// Add leading 0 to single digit time and stringify - String
 function makeTimeDoubleDigitsString(time) {
   return time < 10 ? ("0" + time) : (time.toString())
+}
+
+// Check if Start Timer button was clicked accidentally - Boolean
+function accidentalClick(recipe) {
+  if (Store.getRecipe().length !== 0) {
+    let prevRecipe = Store.getRecipe()[0]
+    return ((JSON.stringify(prevRecipe) === JSON.stringify(recipe)) && (document.getElementById('autolyse-end').innerHTML != ""))
+  }
+
+  return false
 }
 
 // DOM Load Event Listener
@@ -181,18 +223,25 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
 
   // Instanciate Recipe
   const recipe = new Recipe(flour, water, yeast, salt, numberOfFolds, bulkFermentation, proof, numberOfLoaves, startTime)
+
+  // Check if there are empty fields
   const areThereEmptyFields = Object.values(recipe).some(function(field) {
     return field == ""
   })
   
+  // Alert if there are empty fields
   if (areThereEmptyFields) {
     alert("Please fill in fields before starting the timer :)")
+  } else if (accidentalClick(recipe)) {
+    return
   } else {
+    // Remove added extra folding rows if there are any
+    removeExtraFoldingRows(recipe)
     // Add to Local Storage
     Store.addRecipe(recipe)
     // Instanciate UI
     const ui = new UI()
-    // Calculate the times for steps
+    // Calculate and display times for steps
     ui.setTimeForSteps(recipe)
   }
 
