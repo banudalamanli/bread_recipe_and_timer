@@ -28,11 +28,14 @@
   input.start-timer {
     background: orange;
   }
+  input.clear {
+  background: seashell;
+  }
 </style>
 </head>
 <body>
-  <div class="main container twelve columns padding">
-    <h3 class="underline ten columns offset-by-two">Bread Recipe Details</h3>
+  <div class="main container padding">
+    <h3 class="underline ten columns offset-by-four">Bread Recipe Details</h3>
     <h5 class="underline">Ingredients:</h5>
     <form id="recipe-form">
       <div>
@@ -72,12 +75,15 @@
         <h5 class="underline">Start Time:</h5>
         <input type="time" id="start-time" class="u-half-width">
       </div>
-      <!-- <div class="container twelve columns" class="divide-or-multiply">
+      <div class="container twelve columns" class="divide-or-multiply">
         <input type="button" value="Double it" class="six columns" id="multiply">
         <input type="button" value="Halve it" class="six columns" id="divide">
-      </div> -->
+      </div>
       <div class="container twelve columns" id="start-timer">
         <input type="Submit" value="START TIMER" class="start-timer u-full-width">
+      </div>
+      <div class="container twelve columns" id="clear-recipe">
+        <input type="button" value="CLEAR RECIPE" class="clear u-full-width">
       </div>
     </form>
     <hr>
@@ -90,7 +96,7 @@
           <th class="large-font">Time</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="time-table-body">
         <tr>
           <td>Autolyse Ends (Start mixing)</td>
           <td id=autolyse-end></td>
