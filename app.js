@@ -42,22 +42,15 @@ function UI() {
 
     // Check number of folds and add field for extra folds
     if (recipe.numberOfFolds > 2) {
-      // console.log(firstFold)
-      // console.log(secondFold)
       addFoldingRowsWithTime(recipe, secondFold)
     }
   }
 
   UI.prototype.showRecipe = function(recipe) {
-    document.getElementById('flour').value = recipe.flour
-    document.getElementById('water').value = recipe.water
-    document.getElementById('yeast').value = recipe.yeast
-    document.getElementById('salt').value = recipe.salt
-    document.getElementById('number-of-folds').value = recipe.numberOfFolds
-    document.getElementById('bulk-fermentation').value = recipe.bulkFermentation
-    document.getElementById('proof').value = recipe.proof
-    document.getElementById('number-of-loaves').value = recipe.numberOfLoaves
-    document.getElementById('start-time').value = recipe.startTime
+    Object.keys(recipe).forEach(key => {
+      let id = dashify(key)
+      document.getElementById(id).value = recipe[key]
+    })
   }
 }
 
@@ -93,6 +86,19 @@ class Store {
   }
 }
 
+// To change strings to camel case
+function camelize(string) {
+  return string.replace(/(\-[a-z])/g, $1 => $1.toUpperCase().replace('-', ''));
+}
+// ES6 version
+// const camelize = string => string.replace(/(\-[a-z])/g, $1 => $1.toUpperCase().replace('-', ''))
+
+// To change to dash case
+function dashify(string) {
+  return string.replace(/([A-Z])/g, $1 => "-" + $1.toLowerCase());
+}
+
+
 // Set time for step
 function setTime(id, time) {
   document.getElementById(id).innerHTML = time
@@ -112,7 +118,7 @@ function addFoldingRowsWithTime(recipe, endTimeOfPrevFold) {
     row.innerHTML = `
       <td>Fold #${nextFoldNumber}</td>
       <td id="fold-${nextFoldNumber}"></td>`
-    // Insert it before bulk fermentation ends
+    // Insert row before "bulk fermentation ends" node
     timeTable.insertBefore(row, refNode.parentNode)
     // Calculate the time
     lastFoldTime = calculateEndTime(lastFoldTime, 20/60)
