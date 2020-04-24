@@ -131,7 +131,28 @@ function addFoldingRowsWithTime(recipe, endTimeOfPrevFold) {
 }
 
 // Remove extra fold rows
-function removeExtraFoldingRows() {
+function removeExtraFoldingRows(newRecipe) {
+  // Calculate how many extra rows there are
+  const defaultNumOfRows = 10
+  const totalNumOfRows = document.getElementById("time-table-body").rows.length
+  let numOfRowsToDelete = totalNumOfRows - 10
+  let foldNum = 3
+
+  if (Store.getRecipe() == []) { // First time on page; no saved recipe in LS, inital DOM
+    return
+  } else { // LS has recipe from previous visit and there are extra rows
+    let prevRecipe = Store.getRecipe()[0]
+    // Check if recipes have different fold numbers
+    console.log(((prevRecipe.numberOfFolds !== newRecipe.numberOfFolds) && (prevRecipe.numberOfFolds > 2)))
+    if ((prevRecipe.numberOfFolds !== newRecipe.numberOfFolds) && (prevRecipe.numberOfFolds > 2)) {
+      do {
+        let row = document.getElementById(`fold-${foldNum}`).parentNode
+        row.parentNode.removeChild(row)
+        numOfRowsToDelete -= 1
+        foldNum++
+      } while (numOfRowsToDelete > 0)
+    }
+  }
   
 }
 
@@ -214,8 +235,8 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
   } else if (accidentalClick(recipe)) {
     return
   } else {
-    // Remove added extraFoldingRows
-    removeExtraFoldingRows()
+    // Remove added extra folding rows if there are any
+    removeExtraFoldingRows(recipe)
     // Add to Local Storage
     Store.addRecipe(recipe)
     // Instanciate UI
