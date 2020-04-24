@@ -16,28 +16,36 @@ function UI() {
   // Calculate Times for the steps
   UI.prototype.setTimeForSteps = function(recipe) {
     let time = recipe.startTime // It will be a string
+    // Times in strings format
     let autolyseEndTime = calculateEndTime(time, (20/60))
     let mixingEndTime = calculateEndTime(autolyseEndTime, (10/60))
-    let firstFold = calculateEndTime(mixingEndTime, (15/60))
-    let secondFold = calculateEndTime(firstFold, (30/60))
-    let bulkFermentationEnds = calculateEndTime(mixingEndTime, recipe.bulkFermentation)
+    let firstFold = calculateEndTime(mixingEndTime, (10/60))
+    let secondFold = calculateEndTime(firstFold, (20/60))
+    let bulkFermentationEndTime = calculateEndTime(mixingEndTime, recipe.bulkFermentation)
     // console.log(bulkFermentationEnds)
-    let divideAndShapeDone = calculateEndTime(bulkFermentationEnds, (10/60))
+    let divideAndShapeDone = calculateEndTime(bulkFermentationEndTime, (10/60))
     let proofingEnds = calculateEndTime(divideAndShapeDone, recipe.proof)
     let turnOnOven = calculateEndTime(proofingEnds, -1) //1 hour before proofing ends
     let takeLidOff = calculateEndTime(proofingEnds, (40/60)) // 40 minutes later
     let takeOut = calculateEndTime(takeLidOff, (10/60))
 
-    document.getElementById('autolyse-end').innerHTML = autolyseEndTime
-    document.getElementById('mixing-end').innerHTML = mixingEndTime
-    document.getElementById('fold-1').innerHTML = firstFold
-    document.getElementById('fold-2').innerHTML = secondFold
-    document.getElementById('bulk-fermentation-end').innerHTML = bulkFermentationEnds
-    document.getElementById('divide-shape').innerHTML = divideAndShapeDone
-    document.getElementById('turn-on-oven').innerHTML = turnOnOven
-    document.getElementById('proofing-end').innerHTML = proofingEnds
-    document.getElementById('take-lid-off').innerHTML = takeLidOff
-    document.getElementById('take-out').innerHTML = takeOut
+    setTime('autolyse-end', autolyseEndTime)
+    setTime('mixing-end', mixingEndTime)
+    setTime('fold-1', firstFold)
+    setTime('fold-2', secondFold)
+    setTime('bulk-fermentation-end', bulkFermentationEndTime)
+    setTime('divide-shape', divideAndShapeDone)
+    setTime('turn-on-oven', turnOnOven)
+    setTime('proofing-end', proofingEnds)
+    setTime('take-lid-off', takeLidOff)
+    setTime('take-out', takeOut)
+
+    // Check number of folds and add field for extra folds
+    if (recipe.numberOfFolds > 2) {
+      // console.log(firstFold)
+      // console.log(secondFold)
+      addFoldingRowsWithTime(recipe, secondFold)
+    }
   }
 
   UI.prototype.showRecipe = function(recipe) {
@@ -49,7 +57,7 @@ function UI() {
     document.getElementById('bulk-fermentation').value = recipe.bulkFermentation
     document.getElementById('proof').value = recipe.proof
     document.getElementById('number-of-loaves').value = recipe.numberOfLoaves
-   document.getElementById('start-time').value = recipe.startTime
+    document.getElementById('start-time').value = recipe.startTime
   }
 }
 
@@ -83,6 +91,37 @@ class Store {
   static removeRecipe() {
     localStorage.clear()
   }
+}
+
+// Set time for step
+function setTime(id, time) {
+  document.getElementById(id).innerHTML = time
+}
+
+// Add rows to table for extra folds and their times
+function addFoldingRowsWithTime(recipe, endTimeOfPrevFold) {
+  const timeTable = document.getElementById('time-table-body')
+  const refNode = document.getElementById('bulk-fermentation-end') // Node before which the new row will be inserted
+  let numOfExtraFoldingRows = recipe.numberOfFolds - 2 // Default is 2
+  let nextFoldNumber = 3
+  let lastFoldTime = endTimeOfPrevFold
+
+  do {
+    // Create row
+    const row = document.createElement('tr')
+    row.innerHTML = `
+      <td>Fold #${nextFoldNumber}</td>
+      <td id="fold-${nextFoldNumber}"></td>`
+    // Insert it before bulk fermentation ends
+    timeTable.insertBefore(row, refNode.parentNode)
+    // Calculate the time
+    lastFoldTime = calculateEndTime(lastFoldTime, 20/60)
+    // Set the time
+    setTime(`fold-${nextFoldNumber}`, lastFoldTime)
+
+    numOfExtraFoldingRows -= 1
+    nextFoldNumber++
+  } while (numOfExtraFoldingRows > 0)
 }
 
 // Add hours and minutes to time
@@ -142,14 +181,21 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
 
   // Instanciate Recipe
   const recipe = new Recipe(flour, water, yeast, salt, numberOfFolds, bulkFermentation, proof, numberOfLoaves, startTime)
+  const areThereEmptyFields = Object.values(recipe).some(function(field) {
+    return field == ""
+  })
+  
+  if (areThereEmptyFields) {
+    alert("Please fill in fields before starting the timer :)")
+  } else {
+    // Add to Local Storage
+    Store.addRecipe(recipe)
+    // Instanciate UI
+    const ui = new UI()
+    // Calculate the times for steps
+    ui.setTimeForSteps(recipe)
+  }
 
-  // Add to Local Storage
-  Store.addRecipe(recipe)
-
-  // Instanciate UI
-  const ui = new UI()
-  // Calculate the times for steps
-  ui.setTimeForSteps(recipe)
 
 })
 
