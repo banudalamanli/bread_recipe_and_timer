@@ -56,6 +56,10 @@ function UI() {
 
 // Local Storage Class
 class Store {
+  static hasNoRecipe() {
+    return Store.getRecipe()[0] === undefined
+  }
+
   static getRecipe() {
     let storedRecipe = []
     if (localStorage.getItem('recipes') === null) {
@@ -138,7 +142,7 @@ function removeExtraFoldingRows(newRecipe) {
   let numOfRowsToDelete = totalNumOfRows - 10
   let foldNum = 3
 
-  if (Store.getRecipe() == []) { // First time on page; no saved recipe in LS, inital DOM
+  if (Store.getRecipe()[0] === undefined) { // First time on page; no saved recipe in LS, inital DOM
     return
   } else { // LS has recipe from previous visit and there are extra rows
     let prevRecipe = Store.getRecipe()[0]
@@ -254,31 +258,35 @@ document.getElementById('clear-recipe').addEventListener('click', function (e) {
 })
 
 document.getElementById('divide').addEventListener('click', function(e) {
-  e.preventDefault()
-  let initalRecipe = Store.getRecipe()[0]
-  let newRecipe = initalRecipe
-  newRecipe.flour = (Number(initalRecipe.flour) / 2).toString()
-  newRecipe.water = (Number(initalRecipe.water) / 2).toString()
-  newRecipe.yeast = (Number(initalRecipe.yeast) / 2).toString()
-  newRecipe.salt = (Number(initalRecipe.salt) / 2).toString()
-  Store.addRecipe(newRecipe)
+  if (Store.hasNoRecipe()) {
+    alert("Please click Start Timer button first!")
+  } else {
+    let initalRecipe = Store.getRecipe()[0]
+    let newRecipe = initalRecipe
+    newRecipe.flour = (Number(initalRecipe.flour) / 2).toString()
+    newRecipe.water = (Number(initalRecipe.water) / 2).toString()
+    newRecipe.yeast = (Number(initalRecipe.yeast) / 2).toString()
+    newRecipe.salt = (Number(initalRecipe.salt) / 2).toString()
+    Store.addRecipe(newRecipe)
 
-  let ui = new UI()
-
-  ui.showRecipe(newRecipe)
+    let ui = new UI()
+    ui.showRecipe(newRecipe)
+  }
 })
 
 document.getElementById('multiply').addEventListener('click', function (e) {
-  e.preventDefault()
-  let initalRecipe = Store.getRecipe()[0]
-  let newRecipe = initalRecipe
-  newRecipe.flour = (Number(initalRecipe.flour) * 2).toString()
-  newRecipe.water = (Number(initalRecipe.water) * 2).toString()
-  newRecipe.yeast = (Number(initalRecipe.yeast) * 2).toString()
-  newRecipe.salt = (Number(initalRecipe.salt) * 2).toString()
-  Store.addRecipe(newRecipe)
+  if (Store.hasNoRecipe()) {
+    alert("Please click Start Timer button first!")
+  } else {
+    let initalRecipe = Store.getRecipe()[0]
+    let newRecipe = initalRecipe
+    newRecipe.flour = (Number(initalRecipe.flour) * 2).toString()
+    newRecipe.water = (Number(initalRecipe.water) * 2).toString()
+    newRecipe.yeast = (Number(initalRecipe.yeast) * 2).toString()
+    newRecipe.salt = (Number(initalRecipe.salt) * 2).toString()
+    Store.addRecipe(newRecipe)
 
-  let ui = new UI()
-
-  ui.showRecipe(newRecipe)
+    let ui = new UI()
+    ui.showRecipe(newRecipe)
+  }
 })
