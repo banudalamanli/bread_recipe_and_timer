@@ -138,7 +138,7 @@ function removeExtraFoldingRows(newRecipe) {
   let numOfRowsToDelete = totalNumOfRows - 10
   let foldNum = 3
 
-  if (Store.getRecipe() == []) { // First time on page; no saved recipe in LS, inital DOM
+  if (Store.getRecipe()[0] === undefined) { // First time on page; no saved recipe in LS, inital DOM
     return
   } else { // LS has recipe from previous visit and there are extra rows
     let prevRecipe = Store.getRecipe()[0]
