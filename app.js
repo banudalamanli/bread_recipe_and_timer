@@ -20,10 +20,7 @@ function UI() {
     // Times in strings format
     let autolyseEndTime = calculateEndTime(time, (20/60))
     let mixingEndTime = calculateEndTime(autolyseEndTime, (10/60))
-    let firstFold = calculateEndTime(mixingEndTime, (10/60))
-    let secondFold = calculateEndTime(firstFold, (20/60))
     let bulkFermentationEndTime = calculateEndTime(mixingEndTime, recipe.bulkFermentation)
-    // console.log(bulkFermentationEnds)
     let divideAndShapeDone = calculateEndTime(bulkFermentationEndTime, (10/60))
     let proofingEnds = calculateEndTime(divideAndShapeDone, recipe.proof)
     let turnOnOven = calculateEndTime(proofingEnds, -1) //1 hour before proofing ends
@@ -32,8 +29,7 @@ function UI() {
 
     setTime('autolyse-end', autolyseEndTime)
     setTime('mixing-end', mixingEndTime)
-    setTime('fold-1', firstFold)
-    setTime('fold-2', secondFold)
+    addFoldingRowsWithTime(recipe, mixingEndTime)
     setTime('bulk-fermentation-end', bulkFermentationEndTime)
     setTime('divide-shape', divideAndShapeDone)
     setTime('turn-on-oven', turnOnOven)
@@ -41,18 +37,14 @@ function UI() {
     setTime('take-lid-off', takeLidOff)
     setTime('take-out', takeOut)
 
-    // Check number of folds and add field for extra folds
-    if (recipe.numberOfFolds > 2) {
-      addFoldingRowsWithTime(recipe, secondFold)
-    }
   }
+}
 
-  UI.prototype.showRecipe = function(recipe) {
-    Object.keys(recipe).forEach(key => {
-      let id = dashify(key)
-      document.getElementById(id).value = recipe[key]
-    })
-  }
+UI.prototype.showRecipe = function(recipe) {
+  Object.keys(recipe).forEach(key => {
+    let id = dashify(key)
+    document.getElementById(id).value = recipe[key]
+  })
 }
 
 // Local Storage Class
@@ -113,43 +105,40 @@ function setTime(id, time) {
 function addFoldingRowsWithTime(recipe, endTimeOfPrevFold) {
   const timeTable = document.getElementById('time-table-body')
   const refNode = document.getElementById('bulk-fermentation-end') // Node before which the new row will be inserted
-  let numOfExtraFoldingRows = recipe.numberOfFolds - 2 // Default is 2
-  let nextFoldNumber = 3
+  let numOfFoldingRows = recipe.numberOfFolds
+  let foldNumber = 1
   let lastFoldTime = endTimeOfPrevFold
+  let timeIntervalBetweenFolds = 20 //mins
 
   do {
     // Create row
     const row = document.createElement('tr')
     row.innerHTML = `
-      <td>Fold #${nextFoldNumber}</td>
-      <td id="fold-${nextFoldNumber}"></td>`
+      <td>Fold #${foldNumber}</td>
+      <td id="fold-${foldNumber}"></td>`
     // Insert row before "bulk fermentation ends" node
     timeTable.insertBefore(row, refNode.parentNode)
     // Calculate the time
     lastFoldTime = calculateEndTime(lastFoldTime, 20/60)
     // Set the time
-    setTime(`fold-${nextFoldNumber}`, lastFoldTime)
+    setTime(`fold-${foldNumber}`, lastFoldTime)
 
-    numOfExtraFoldingRows -= 1
-    nextFoldNumber++
-  } while (numOfExtraFoldingRows > 0)
+    numOfFoldingRows -= 1
+    foldNumber++
+  } while (numOfFoldingRows > 0)
 }
 
 // Remove extra fold rows
-function removeExtraFoldingRows(newRecipe) {
-  // Calculate how many extra rows there are
-  const defaultNumOfRows = 10
-  const totalNumOfRows = document.getElementById("time-table-body").rows.length
-  let numOfRowsToDelete = totalNumOfRows - 10
-  let foldNum = 3
+function removeFoldingRows(newRecipe) {
+  let prevRecipe = Store.getRecipe()[0]
+  let numOfRowsToDelete = prevRecipe.numberOfFolds
+  let foldNum = 1
 
   if (Store.getRecipe()[0] === undefined) { // First time on page; no saved recipe in LS, inital DOM
     return
-  } else { // LS has recipe from previous visit and there are extra rows
-    let prevRecipe = Store.getRecipe()[0]
+  } else { // LS has recipe from previous visit
     // Check if recipes have different fold numbers
-    console.log(((prevRecipe.numberOfFolds !== newRecipe.numberOfFolds) && (prevRecipe.numberOfFolds > 2)))
-    if ((prevRecipe.numberOfFolds !== newRecipe.numberOfFolds) && (prevRecipe.numberOfFolds > 2)) {
+    if (prevRecipe.numberOfFolds !== newRecipe.numberOfFolds) {
       do {
         let row = document.getElementById(`fold-${foldNum}`).parentNode
         row.parentNode.removeChild(row)
@@ -242,7 +231,7 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
     return
   } else {
     // Remove added extra folding rows if there are any
-    removeExtraFoldingRows(recipe)
+    removeFoldingRows(recipe)
     // Add to Local Storage
     Store.addRecipe(recipe)
     // Instanciate UI
@@ -250,7 +239,6 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
     // Calculate and display times for steps
     ui.setTimeForSteps(recipe)
   }
-
 
 })
 
