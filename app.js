@@ -131,12 +131,12 @@ function addFoldingRowsWithTime(recipe, endTimeOfPrevFold) {
 // Remove extra fold rows
 function removeFoldingRows(newRecipe) {
   let prevRecipe = Store.getRecipe()[0]
-  let numOfRowsToDelete = prevRecipe.numberOfFolds
-  let foldNum = 1
-
-  if (Store.getRecipe()[0] === undefined) { // First time on page; no saved recipe in LS, inital DOM
+  
+  if (prevRecipe === undefined) { // First time on page; no saved recipe in LS, inital DOM
     return
   } else { // LS has recipe from previous visit
+    let numOfRowsToDelete = prevRecipe.numberOfFolds
+    let foldNum = 1
     // Check if recipes have different fold numbers
     if (prevRecipe.numberOfFolds !== newRecipe.numberOfFolds) {
       do {
