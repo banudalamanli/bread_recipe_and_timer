@@ -230,9 +230,9 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
   } else if (accidentalClick(recipe)) {
     return
   } else {
-    // Remove added extra folding rows if there are any
+    // Remove previous folding rows if there are any
     removeFoldingRows(recipe)
-    // Add to Local Storage
+    // Add recipe to Local Storage
     Store.addRecipe(recipe)
     // Instanciate UI
     const ui = new UI()
