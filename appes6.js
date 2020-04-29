@@ -42,10 +42,29 @@ class UI {
 
 
   showRecipe(recipe) {
-  Object.keys(recipe).forEach(key => {
-    let id = dashify(key)
-    document.getElementById(id).value = recipe[key]
-  })
+    Object.keys(recipe).forEach(key => {
+      let id = dashify(key)
+      document.getElementById(id).value = recipe[key]
+    })
+  }
+
+  static showAlert(message, className) {
+    // Create div
+    const div = document.createElement('div')
+    // Add classes to div
+    div.className = `alert ${className}`
+    // Add alert message
+    div.appendChild(document.createTextNode(message))
+    // Get parent
+    const container = document.querySelector('.container')
+    console.log(container)
+    // Get form
+    const form = document.querySelector('#recipe-form')
+    console.log(form)
+    // Insert alert
+    container.insertBefore(div, form)
+    // Timeout after 3 seconds
+    setTimeout((() => document.querySelector('.alert').remove()), 3000)
   }
 }
 
@@ -219,7 +238,7 @@ document.getElementById('recipe-form').addEventListener('submit', function (e) {
 
   // Alert if there are empty fields
   if (areThereEmptyFields) {
-    alert("Please fill in fields before starting the timer :)")
+    UI.showAlert("Please fill in fields before starting the timer :)", 'error')
   } else if (accidentalClick(recipe)) {
     return
   } else {
@@ -227,12 +246,13 @@ document.getElementById('recipe-form').addEventListener('submit', function (e) {
     removeFoldingRows(recipe)
     // Add recipe to Local Storage
     Store.addRecipe(recipe)
-    // Instanciate UI
-    const ui = new UI()
-    // Calculate and display times for steps
-    ui.setTimeForSteps(recipe)
   }
 
+  // Instanciate UI
+  const ui = new UI()
+
+  // Calculate and display times for steps
+  ui.setTimeForSteps(recipe)
 })
 
 document.getElementById('clear-recipe').addEventListener('click', function (e) {
@@ -242,7 +262,7 @@ document.getElementById('clear-recipe').addEventListener('click', function (e) {
 
 document.getElementById('divide').addEventListener('click', function (e) {
   if (Store.hasNoRecipe()) {
-    alert("Please click Start Timer button first!")
+    UI.showAlert("Please click Start Timer button first!", 'error')
   } else {
     let initalRecipe = Store.getRecipe()[0]
     let newRecipe = initalRecipe
@@ -260,7 +280,7 @@ document.getElementById('divide').addEventListener('click', function (e) {
 
 document.getElementById('multiply').addEventListener('click', function (e) {
   if (Store.hasNoRecipe()) {
-    alert("Please click Start Timer button first!")
+    UI.showAlert("Please click Start Timer button first!", 'error')
   } else {
     let initalRecipe = Store.getRecipe()[0]
     let newRecipe = initalRecipe
